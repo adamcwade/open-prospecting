@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+:root {
+  --primary: #ea580c;
+  --accent: #d04d09;
+  --background: #000000;
+  --surface: #0c0b0a;
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1aa;
+  --muted: #5a564f;
+  --border: #2c2a28;
+  --border-soft: #1b1a18;
+}
+
+@theme inline {
+  --color-primary: var(--primary);
+  --color-accent: var(--accent);
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-border-soft: var(--border-soft);
+}
+
+body {
+  background: var(--background);
+  color: var(--text-primary);
+  font-family: "Inter", system-ui, sans-serif;
+}
+.font-display {
+  font-family: "Bricolage Grotesque", "Inter", system-ui, sans-serif;
+  font-optical-sizing: auto;
+  letter-spacing: -0.02em;
+}
+.font-label {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
