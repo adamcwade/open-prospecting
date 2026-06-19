@@ -31,7 +31,7 @@ export default async function ProspectDetailPage({
 
   const detail = await getProspectDetail(prospectId);
   if (!detail) notFound();
-  const { prospect: p, tasks, script, strategy } = detail;
+  const { prospect: p, tasks, script } = detail;
 
   const meta: ReactNode[] = [];
   if (p.industry) meta.push(<span key="industry">{p.industry}</span>);
@@ -114,8 +114,8 @@ export default async function ProspectDetailPage({
 
           {tasks.length === 0 ? (
             <div className={`${cardClass} text-sm text-text-secondary`}>
-              Not researched yet — run research to determine the tasks Modus can
-              do for this business.
+              Not researched yet. Run research to generate the value tasks for
+              this business.
             </div>
           ) : (
             <div className={`${cardClass} p-0`}>
@@ -161,13 +161,13 @@ export default async function ProspectDetailPage({
           {script ? (
             <div className={`${cardClass} space-y-5`}>
               <div>
-                <div className="font-label text-[10px] text-muted">Voice</div>
+                <div className="font-label text-[10px] text-muted">Call script</div>
                 <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-text-secondary">
                   {script.voiceScript}
                 </p>
               </div>
               <div className="border-t border-border-soft pt-5">
-                <div className="font-label text-[10px] text-muted">SMS</div>
+                <div className="font-label text-[10px] text-muted">Message (SMS or email)</div>
                 <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-text-secondary">
                   {script.smsScript}
                 </p>
@@ -175,47 +175,12 @@ export default async function ProspectDetailPage({
             </div>
           ) : (
             <div className={`${cardClass} text-sm text-text-secondary`}>
-              No script generated yet — scripting drafts the voice &amp; SMS pitch
+              No script yet. Scripting drafts a call script and outreach message
               once the prospect is researched.
             </div>
           )}
         </section>
 
-        {/* Strategy — only shown when one informs this prospect's pitch */}
-        {strategy && (
-          <section className="mt-8">
-            <div className="mb-4 flex items-center gap-2.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-              <span className="font-label text-[11px] text-muted">
-                Strategy · v{strategy.version}
-              </span>
-            </div>
-            <div className={`${cardClass} space-y-5`}>
-              <div>
-                <div className="font-label text-[10px] text-muted">Pitch angle</div>
-                <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-                  {strategy.pitchAngle}
-                </p>
-              </div>
-              <div className="border-t border-border-soft pt-5">
-                <div className="font-label text-[10px] text-muted">
-                  Objection handling
-                </div>
-                <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-                  {strategy.objectionHandling}
-                </p>
-              </div>
-              {strategy.rationale && (
-                <div className="border-t border-border-soft pt-5">
-                  <div className="font-label text-[10px] text-muted">Rationale</div>
-                  <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-                    {strategy.rationale}
-                  </p>
-                </div>
-              )}
-            </div>
-          </section>
-        )}
       </div>
     </main>
   );

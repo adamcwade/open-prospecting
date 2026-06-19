@@ -16,31 +16,11 @@ import {
 // ---------------------------------------------------------------------------
 
 export const prospectStatus = pgEnum("prospect_status", [
-  "new",
-  "incomplete",
-  "researched",
-  "scripted",
-  "queued",
-  "contacted",
-  "agreed", // a "sale" — agreed to sign up
-  "signed_up", // converted to a paying client on the website
-  "declined",
-  "opted_out",
+  "new", // discovered, has phone + website
+  "incomplete", // discovered but missing phone or website
+  "researched", // tasks generated
+  "scripted", // outreach script + message generated, ready to contact
 ]);
-
-export const channel = pgEnum("channel", ["voice", "sms", "email"]);
-
-export const attemptOutcome = pgEnum("attempt_outcome", [
-  "no_answer",
-  "voicemail",
-  "connected",
-  "declined",
-  "opted_out",
-  "agreed",
-  "failed",
-]);
-
-export const numberState = pgEnum("number_state", ["pool", "assigned", "resting"]);
 
 // ---------------------------------------------------------------------------
 // Prospects
@@ -88,8 +68,7 @@ export const researchTasks = pgTable("research_tasks", {
   title: text("title").notNull(),
   description: text("description").notNull(),
   // Short, scannable points shown under each task on the prospect page. The
-  // longer `description` is kept for script generation. Empty for rows created
-  // before this column existed until the backfill populates them.
+  // longer `description` is kept for script generation.
   bullets: jsonb("bullets").$type<string[]>().notNull().default([]),
   // Why this task matters: revenue (grows sales), cost (cuts spend/admin), or other.
   // Tasks are ordered revenue → cost → other.
@@ -103,79 +82,9 @@ export const scripts = pgTable("scripts", {
   prospectId: integer("prospect_id")
     .notNull()
     .references(() => prospects.id, { onDelete: "cascade" }),
-  strategyId: integer("strategy_id").references(() => strategies.id),
+  // A suggested talking-points script for a call, and a short outreach message
+  // (usable for SMS or email). Both are starting points for manual outreach.
   voiceScript: text("voice_script").notNull(),
   smsScript: text("sms_script").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-});
-
-export const contactAttempts = pgTable(
-  "contact_attempts",
-  {
-    id: serial("id").primaryKey(),
-    prospectId: integer("prospect_id")
-      .notNull()
-      .references(() => prospects.id, { onDelete: "cascade" }),
-    channel: channel("channel").notNull(),
-    fromNumber: text("from_number"),
-    toNumber: text("to_number"),
-    outcome: attemptOutcome("outcome"),
-    durationSeconds: integer("duration_seconds"),
-    recordingUrl: text("recording_url"),
-    twilioSid: text("twilio_sid"),
-    disclosurePlayed: boolean("disclosure_played").notNull().default(false),
-    startedAt: timestamp("started_at", { withTimezone: true }).notNull().defaultNow(),
-    endedAt: timestamp("ended_at", { withTimezone: true }),
-  },
-  (t) => ({ prospectIdx: index("attempts_prospect_idx").on(t.prospectId) })
-);
-
-export const transcripts = pgTable("transcripts", {
-  id: serial("id").primaryKey(),
-  attemptId: integer("attempt_id")
-    .notNull()
-    .references(() => contactAttempts.id, { onDelete: "cascade" }),
-  turns: jsonb("turns").notNull().default([]),
-  summary: text("summary"),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-});
-
-export const optOuts = pgTable(
-  "opt_outs",
-  {
-    id: serial("id").primaryKey(),
-    phone: text("phone").notNull(),
-    reason: text("reason"),
-    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  },
-  (t) => ({ phoneIdx: uniqueIndex("opt_outs_phone_uniq").on(t.phone) })
-);
-
-export const strategies = pgTable("strategies", {
-  id: serial("id").primaryKey(),
-  version: integer("version").notNull(),
-  pitchAngle: text("pitch_angle").notNull(),
-  objectionHandling: text("objection_handling").notNull(),
-  targetVerticalMix: jsonb("target_vertical_mix").notNull().default({}),
-  rationale: text("rationale"),
-  isActive: boolean("is_active").notNull().default(false),
-  createdByCall: integer("created_by_call"),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-});
-
-export const phoneNumbers = pgTable("phone_numbers", {
-  id: serial("id").primaryKey(),
-  e164: text("e164").notNull().unique(),
-  areaCode: text("area_code"),
-  state: numberState("state").notNull().default("pool"),
-  assignedClientId: integer("assigned_client_id"),
-  lastUsedAt: timestamp("last_used_at", { withTimezone: true }),
-  restUntil: timestamp("rest_until", { withTimezone: true }),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-});
-
-export const settings = pgTable("settings", {
-  key: text("key").primaryKey(),
-  value: jsonb("value").notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

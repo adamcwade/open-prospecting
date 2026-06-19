@@ -28,9 +28,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Link href="/" className="text-text-secondary hover:text-text-primary">
               Overview
             </Link>
-            <Link href="/calls" className="text-text-secondary hover:text-text-primary">
-              Call history
-            </Link>
           </nav>
         </header>
         {children}

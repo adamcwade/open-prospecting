@@ -5,10 +5,6 @@ import { cardClass } from "@/lib/ui";
 
 export const dynamic = "force-dynamic";
 
-function pct(n: number) {
-  return `${(n * 100).toFixed(1)}%`;
-}
-
 const COLUMNS: { key: ProspectSort | "website"; label: string; sortable: boolean }[] = [
   { key: "businessName", label: "Business", sortable: true },
   { key: "industry", label: "Industry", sortable: true },
@@ -39,14 +35,12 @@ export default async function Overview({
   const { rows, total, page, pageSize, pageCount, sort, dir } = list;
 
   const cards = [
-    { label: "Total calls", value: stats.callsTotal, hero: true },
-    { label: "Sales", value: stats.sales, hero: true },
-    { label: "Hangups / no answer", value: stats.hangups },
-    { label: "Remaining to call", value: stats.remainingCalls },
-    { label: "Prospects", value: stats.prospectsTotal },
-    { label: "Connect rate", value: pct(stats.connectRate) },
-    { label: "Sale rate", value: pct(stats.saleRate) },
-    { label: "Opt-outs", value: stats.optOuts },
+    { label: "Prospects", value: stats.total, hero: true },
+    { label: "Ready to contact", value: stats.scripted, hero: true },
+    { label: "Researched", value: stats.researched },
+    { label: "Not yet researched", value: stats.newCount },
+    { label: "With phone", value: stats.withPhone },
+    { label: "With email", value: stats.withEmail },
   ];
 
   // Clicking a sortable header sorts ascending, or flips direction if already active.

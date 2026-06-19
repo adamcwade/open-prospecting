@@ -7,7 +7,6 @@
     "build": "next build",
     "start": "next start --port 3100",
     "lint": "eslint",
-    "voice": "tsx src/server/voice-ws.ts",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio"
@@ -19,8 +18,6 @@
     "next": "16.2.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "twilio": "^6.0.2",
-    "ws": "^8.18.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -28,7 +25,6 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@types/ws": "^8.5.12",
     "dotenv": "^17.0.0",
     "drizzle-kit": "^0.31.0",
     "eslint": "^9",
